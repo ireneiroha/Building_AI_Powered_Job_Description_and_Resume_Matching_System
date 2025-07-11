@@ -1,34 +1,57 @@
-# Building-an-AI-Powered-Job-Description-and-Resume-Matching-System-With-Python-Using-Machine-Learning
+🤖✨ AI-Powered-Job-Description-And-Resume-Matching-System
+This system uses modern AI and NLP techniques to automatically match job descriptions to resumes based on contextual meaning, not just keywords.
 
+✅ How the AI Works
+📌 BERT Embeddings: We use the sentence-transformers library (all-MiniLM-L6-v2 model) — a state-of-the-art, transformer-based model that converts text into semantic vectors.
 
-This project aims to build a job description and resume matching system using Python with machine learning techniques. The system helps streamline the recruitment process by automatically matching job descriptions with submitted resumes, providing recruiters with a more efficient way to identify suitable candidates.
+📌 Semantic Similarity: The system computes cosine similarity between the job description and each resume, comparing the meaning of the text rather than simple word overlap.
 
-## 🌍 SDG 8 Impact Statement
+📌 Context-Aware Ranking: Unlike classic keyword matching, BERT embeddings understand synonyms, phrasing, and context — giving recruiters better, fairer matches.
 
-**This project supports Sustainable Development Goal 8 (Decent Work and Economic Growth)** by:
+Roughly 60% of this project’s technical logic focuses on AI/NLP, with the other 40% supporting backend routing, file handling, and the user interface.
 
-- Using AI to reduce bias and subjectivity in resume screening.
-- Promoting fair, skills-based matching to help candidates find decent work.
-- Enabling employers to discover qualified talent efficiently.
-- Encouraging equal opportunity hiring by anonymizing resumes if desired.
+🌍 Supporting SDG 8 — Decent Work and Economic Growth
+This project supports the United Nations Sustainable Development Goal 8 by:
 
-By adopting advanced NLP and fair screening principles, this project helps make recruitment more **inclusive, fair, and transparent**.
+✅ Promoting fair and inclusive hiring through skill-based, bias-reduced matching.
 
+✅ Giving equal opportunity to candidates by evaluating resumes on content, not just surface keywords.
 
-## Features
+✅ Helping recruiters discover hidden talent, encouraging productive employment and economic growth.
 
-- **Job Description Input:** Recruiters can input job descriptions into the system.
-- **Resume Upload:** Candidates can upload their resumes for matching against job descriptions.
-- **Matching Algorithm:** The system utilizes machine learning algorithms to match job descriptions with resumes based on similarity scores.
-- **Result Presentation:** Matched resumes are presented to recruiters with similarity scores and relevant details.
+🛠️ Technical Stack
+Python & Flask: For backend API and routing.
 
-## Technologies Used
+Sentence-Transformers (BERT): For advanced semantic text understanding.
 
-- **Python:** Backend development using Python programming language.
-- **Flask:** Web framework for building the backend server and handling HTTP requests.
-- **Bootstrap:** Frontend design and layout using Bootstrap for responsive and user-friendly UI.
-- **Machine Learning Libraries:** Libraries such as scikit-learn for implementing machine learning algorithms for text similarity matching.
-- **HTML/CSS:** Frontend markup and styling for web pages.
+PyPDF2 & docx2txt: For extracting text from various resume formats.
+
+Bootstrap, HTML/CSS: For a simple, responsive frontend.
+
+✅ Example AI Workflow
+1️⃣ Input: Recruiter enters a job description.
+2️⃣ Upload: Candidates upload resumes (PDF, DOCX, TXT).
+3️⃣ Embeddings: The system uses BERT to generate semantic vectors for both.
+4️⃣ Similarity: Computes cosine similarity to rank matches.
+5️⃣ Output: Displays top resumes with similarity scores.
+
+📌 Responsible AI & Fairness
+The matching focuses on skills & context, reducing hidden bias from keyword-only filters.
+
+(Optional) Resumes can be anonymized to remove names/contacts for blind matching.
+
+(Optional) Recruiters can provide candidates feedback to improve employability.
+
+🚀 Run It Locally
+
+pip install -r requirements.txt
+
+python app.py
+
+Visit http://localhost:5000 to try it!
+
+📣 Contribution
+We welcome ideas for improving fairness, bias detection, and new AI features to make this system even more inclusive.
   
 - PITCH DESK: https://gamma.app/docs/AI-Powered-Recruitment-Job-Description-Resume-Matching-p44048pum1xwkps?mode=doc
 
