@@ -17,6 +17,8 @@ This project aims to build a job description and resume matching system using Py
 - **Bootstrap:** Frontend design and layout using Bootstrap for responsive and user-friendly UI.
 - **Machine Learning Libraries:** Libraries such as scikit-learn for implementing machine learning algorithms for text similarity matching.
 - **HTML/CSS:** Frontend markup and styling for web pages.
+  
+- PITCH DESK: https://gamma.app/docs/AI-Powered-Recruitment-Job-Description-Resume-Matching-p44048pum1xwkps?mode=doc
 
 
 
