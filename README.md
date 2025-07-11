@@ -3,6 +3,18 @@
 
 This project aims to build a job description and resume matching system using Python with machine learning techniques. The system helps streamline the recruitment process by automatically matching job descriptions with submitted resumes, providing recruiters with a more efficient way to identify suitable candidates.
 
+## 🌍 SDG 8 Impact Statement
+
+**This project supports Sustainable Development Goal 8 (Decent Work and Economic Growth)** by:
+
+- Using AI to reduce bias and subjectivity in resume screening.
+- Promoting fair, skills-based matching to help candidates find decent work.
+- Enabling employers to discover qualified talent efficiently.
+- Encouraging equal opportunity hiring by anonymizing resumes if desired.
+
+By adopting advanced NLP and fair screening principles, this project helps make recruitment more **inclusive, fair, and transparent**.
+
+
 ## Features
 
 - **Job Description Input:** Recruiters can input job descriptions into the system.
