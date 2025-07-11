@@ -1,23 +1,13 @@
-import os
-print("⚡ Current working directory:", os.getcwd())
-print("⚡ Listing files in current directory:", os.listdir())
-if os.path.exists("templates"):
-    print("⚡ 'templates' folder exists.")
-    print("⚡ Files inside 'templates':", os.listdir("templates"))
-else:
-    print("⚡ 'templates' folder NOT FOUND.")
-
 from flask import Flask, request, render_template
 import os
 import docx2txt
 import PyPDF2
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import os
-print("Current working directory:", os.getcwd())
+from sentence_transformers import SentenceTransformer, util
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
+
+model = SentenceTransformer('all-MiniLM-L6-v2')  # Load BERT model
 
 def extract_text_from_pdf(file_path):
     text = ""
@@ -63,19 +53,17 @@ def matcher():
         if not resumes or not job_description:
             return render_template('matchresume.html', message="Please upload resumes and enter a job description.")
 
-        # Vectorize job description and resumes
-        vectorizer = TfidfVectorizer().fit_transform([job_description] + resumes)
-        vectors = vectorizer.toarray()
+        # Use BERT embeddings
+        job_embedding = model.encode(job_description, convert_to_tensor=True)
+        resume_embeddings = model.encode(resumes, convert_to_tensor=True)
 
-        # Calculate cosine similarities
-        job_vector = vectors[0]
-        resume_vectors = vectors[1:]
-        similarities = cosine_similarity([job_vector], resume_vectors)[0]
+        # Compute cosine similarities
+        cosine_scores = util.cos_sim(job_embedding, resume_embeddings)[0].cpu().tolist()
 
-        # Get top 3 resumes and their similarity scores
-        top_indices = similarities.argsort()[-5:][::-1]
+        # Get top 5 matches
+        top_indices = sorted(range(len(cosine_scores)), key=lambda i: cosine_scores[i], reverse=True)[:5]
         top_resumes = [resume_files[i].filename for i in top_indices]
-        similarity_scores = [round(similarities[i], 2) for i in top_indices]
+        similarity_scores = [round(cosine_scores[i], 2) for i in top_indices]
 
         return render_template('matchresume.html', message="Top matching resumes:", top_resumes=top_resumes, similarity_scores=similarity_scores)
 
@@ -85,3 +73,4 @@ if __name__ == '__main__':
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
     app.run(debug=True)
+
