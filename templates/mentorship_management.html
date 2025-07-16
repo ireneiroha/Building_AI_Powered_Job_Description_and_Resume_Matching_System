@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerLink - Mentorship Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Mentorship Management - {{ username }}</h2>
+        {% if mentorships %}
+            {% for mentorship in mentorships %}
+                <div class="mentorship">
+                    <h3>Mentee: {{ mentorship.mentee.username }}</h3>
+                    <p>Started on: {{ mentorship.start_date.strftime('%Y-%m-%d') }}</p>
+                    <h4>Upcoming Sessions</h4>
+                    <ul>
+                        {% for session in mentorship.sessions if session.session_date > now and session.status == 'scheduled' %}
+                            <li>{{ session.session_date.strftime('%Y-%m-%d %H:%M') }} - {{ session.topic or 'No topic specified' }}</li>
+                        {% else %}
+                            <li>No upcoming sessions.</li>
+                        {% endfor %}
+                    </ul>
+                    <h4>Past Sessions</h4>
+                    <ul>
+                        {% for session in mentorship.sessions if session.session_date < now and session.status == 'completed' %}
+                            <li>{{ session.session_date.strftime('%Y-%m-%d %H:%M') }} - {{ session.topic or 'No topic specified' }} - Notes: {{ session.notes or 'None' }}</li>
+                        {% else %}
+                            <li>No past sessions.</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{{ url_for('schedule_session', mentorship_id=mentorship.id) }}">Schedule New Session</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>You have no active mentorships.</p>
+        {% endif %}
+        <p><a href="{{ url_for('profile') }}">Back to Profile</a></p>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

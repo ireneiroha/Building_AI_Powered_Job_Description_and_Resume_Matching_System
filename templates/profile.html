@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerLink - Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+    <div class="sidebar">
+        <h2>{{ profile.name }}</h2>
+        <p>{{ profile.role }}</p>
+        <p>{{ profile.location }}</p>
+        <ul>
+            <li>Overview</li>
+            <li>Skills</li>
+            <li>Experience</li>
+            <li>Achievements</li>
+            <li>Settings</li>
+        </ul>
+    </div>
+    <div class="main">
+        <a class="edit-btn" href="{{ url_for('edit_profile') }}">✏️ Edit Profile</a>
+        <h2>Overview</h2>
+        <div class="personal-info">
+            <p><strong>Full Name:</strong> {{ profile.name }}</p>
+            <p><strong>Email:</strong> {{ profile.user.email }}</p>
+            <p><strong>Location:</strong> {{ profile.location }}</p>
+            <p><strong>Role:</strong> {{ profile.role }}</p>
+            <p><strong>Bio:</strong> {{ profile.bio }}</p>
+        </div>
+
+        <div class="social-links">
+            <h3>Social Links</h3>
+            <p><strong>Website:</strong> {{ profile.website }}</p>
+            <p><strong>LinkedIn:</strong> {{ profile.linkedin }}</p>
+            <p><strong>GitHub:</strong> {{ profile.github }}</p>
+            <p><strong>Member Since:</strong> {{ profile.member_since.strftime('%Y-%m-%d') }}</p>
+        </div>
+    </div>
+</div>
+    
+</div>
+    <div class="mentorship-upskilling">
+        <div class="mentorship-overview">
+            <h2>Mentorship Overview</h2>
+            {% if mentorships %}
+                <ul>
+                    {% for mentorship in mentorships %}
+                        <li>
+                            <p><strong>Mentee:</strong> {{ mentorship.mentee.username }}</p>
+                            <p><strong>Start Date:</strong> {{ mentorship.start_date.strftime('%Y-%m-%d') }}</p>
+                            <p><strong>Status:</strong> {{ mentorship.status }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No active mentorships.</p>
+            {% endif %}
+        </div>
+        <div class="upskilling-progress">
+            <h2>Upskilling Progress</h2>
+            {% if user_skills %}
+                <ul>
+                    {% for skill in user_skills %}
+                        <li>
+                            <p><strong>Skill:</strong> {{ skill.skill.name }}</p>
+                            <p><strong>Score:</strong> {{ skill.score }}%</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills recorded.</p>
+            {% endif %}
+            <a href="{{ url_for('upskilling') }}">View Learning Paths</a>
+        </div>
+        <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+    </div>
+</div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
