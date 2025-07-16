@@ -42,6 +42,8 @@ The matching focuses on skills & context, reducing hidden bias from keyword-only
 
 (Optional) Recruiters can provide candidates feedback to improve employability.
 
+Loom video link: https://www.loom.com/share/89ffd0ec4ac24f2f9fb45f3b6225fb99?sid=743ae42e-4231-4e82-bd04-f2be17f53eb4
+
 🚀 Run It Locally
 
 pip install -r requirements.txt
