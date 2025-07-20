@@ -80,6 +80,15 @@ class UserSkill(db.Model):
     change_amount = db.Column(db.Float, nullable=True)
     change_date = db.Column(db.DateTime, nullable=True)
 
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    type = db.Column(db.String(50), nullable=True) # e.g., 'job_match', 'mentorship_session', 'system'
+    read = db.Column(db.Boolean, default=False) # True if user has seen it, False otherwise
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
 # Text extraction functions
 def extract_text_from_pdf(file_path):
     text = ""
@@ -150,7 +159,14 @@ def login():
                 db.session.add(session2)
                 db.session.add(session3)
                 db.session.commit()
-            if not UserSkill.query.filter_by(user_id=user.id).first():
+                notif1 = Notification(user_id=user.id, message=f"Upcoming session: '{session1.topic}' on {session1.session_date.strftime('%Y-%m-%d %H:%M')}.", type='mentorship_session')
+                notif2 = Notification(user_id=user.id, message=f"Session completed: '{session2.topic}'.", type='mentorship_session', read=True) # Mark completed ones as read if desired
+                notif3 = Notification(user_id=user.id, message=f"Upcoming session: '{session3.topic}' on {session3.session_date.strftime('%Y-%m-%d %H:%M')}.", type='mentorship_session')
+                db.session.add(notif1)
+                db.session.add(notif2)
+                db.session.add(notif3)
+                db.session.commit() 
+           if not UserSkill.query.filter_by(user_id=user.id).first():
                 skills = ['Machine Learning', 'Deep Learning', 'NLP', 'Computer Vision', 'Data Engineering']
                 for skill_name in skills:
                     skill = Skill.query.filter_by(name=skill_name).first()
@@ -306,6 +322,19 @@ def matcher():
             )
             db.session.add(match)
         db.session.commit()
+       # Create notifications for new resume matches
+        for i in range(len(resume_files)):
+            match_filename = resume_files[i].filename
+            match_score = round(cosine_scores[i] * 100, 2)
+            notification_message = f"New resume match found: '{match_filename}' with score {match_score}%!"
+            new_notification = Notification(
+                user_id=user_id,
+                message=notification_message,
+                type='job_match' 
+            )
+            db.session.add(new_notification)
+        db.session.commit() 
+
         all_matches = ResumeMatch.query.filter_by(user_id=user_id).all()
         job_matches = len(all_matches)
         one_week_ago = datetime.now() - timedelta(days=7)
@@ -373,6 +402,66 @@ def mentorship():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+
+@app.route('/notifications')
+def notifications_page():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    all_notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.timestamp.desc()).all()
+    
+    for notif in all_notifications:
+        if not notif.read:
+            notif.read = True
+    db.session.commit()
+
+    return render_template('notifications.html', 
+                           username=session['username'], 
+                           notifications=all_notifications)
+
+@app.route('/api/notifications', methods=['GET'])
+def get_notifications_api():
+    if 'user_id' not in session:
+        return {'error': 'Unauthorized'}, 401
+
+    user_id = session['user_id']
+    
+    unread_count = Notification.query.filter_by(user_id=user_id, read=False).count()
+    all_notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.timestamp.desc()).all()
+
+    notifications_data = []
+    for notif in all_notifications:
+        notifications_data.append({
+            'id': notif.id,
+            'message': notif.message,
+            'type': notif.type,
+            'read': notif.read,
+            'timestamp': notif.timestamp.isoformat()
+        })
+
+    return {
+        'unread_count': unread_count,
+        'notifications': notifications_data
+    }
+
+@app.route('/api/notifications/mark_read/<int:notification_id>', methods=['POST'])
+def mark_notification_read_api(notification_id):
+    if 'user_id' not in session:
+        return {'error': 'Unauthorized'}, 401
+
+    user_id = session['user_id']
+    notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first()
+
+    if not notification:
+        return {'error': 'Notification not found or not authorized'}, 404
+
+    notification.read = True
+    db.session.commit()
+
+    new_unread_count = Notification.query.filter_by(user_id=user_id, read=False).count()
+    return {'message': 'Notification marked as read', 'notification_id': notification_id, 'new_unread_count': new_unread_count}
 
 
 @app.route('/upskilling')
