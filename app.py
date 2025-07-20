@@ -166,7 +166,7 @@ def login():
                 db.session.add(notif2)
                 db.session.add(notif3)
                 db.session.commit() 
-           if not UserSkill.query.filter_by(user_id=user.id).first():
+            if not UserSkill.query.filter_by(user_id=user.id).first():
                 skills = ['Machine Learning', 'Deep Learning', 'NLP', 'Computer Vision', 'Data Engineering']
                 for skill_name in skills:
                     skill = Skill.query.filter_by(name=skill_name).first()
@@ -408,10 +408,10 @@ def logout():
 def notifications_page():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
+
     user_id = session['user_id']
     all_notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.timestamp.desc()).all()
-    
+
     for notif in all_notifications:
         if not notif.read:
             notif.read = True
@@ -427,7 +427,7 @@ def get_notifications_api():
         return {'error': 'Unauthorized'}, 401
 
     user_id = session['user_id']
-    
+
     unread_count = Notification.query.filter_by(user_id=user_id, read=False).count()
     all_notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.timestamp.desc()).all()
 
